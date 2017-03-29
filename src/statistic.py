@@ -20,7 +20,7 @@ class Statistic(object):
 
     self.model_dir = model_dir
     self.saver = tf.train.Saver(variables + [self.t_op], max_to_keep=max_to_keep)
-    self.writer = tf.train.SummaryWriter('./logs/%s' % self.model_dir, self.sess.graph)
+    self.writer = tf.summary.FileWriter('./logs/%s' % self.model_dir, self.sess.graph)
 
     with tf.variable_scope('summary'):
       scalar_summary_tags = ['total r', 'avg r', 'avg q', 'avg v', 'avg a', 'avg l']
@@ -30,7 +30,7 @@ class Statistic(object):
 
       for tag in scalar_summary_tags:
         self.summary_placeholders[tag] = tf.placeholder('float32', None, name=tag.replace(' ', '_'))
-        self.summary_ops[tag]  = tf.scalar_summary('%s/%s' % (self.env_name, tag), self.summary_placeholders[tag])
+        self.summary_ops[tag]  = tf.summary.scalar('%s/%s' % (self.env_name, tag), self.summary_placeholders[tag])
 
   def reset(self):
     self.total_q = 0.
@@ -61,15 +61,15 @@ class Statistic(object):
       avg_r = np.mean(self.ep_rewards)
       total_r = np.sum(self.ep_rewards)
 
-      logger.info('t: %d, R: %.3f, r: %.3f, q: %.3f, v: %.3f, a: %.3f, l: %.3f' \
-          % (self.t, total_r, avg_r, avg_q, avg_q, avg_a, avg_l))
+      # logger.info('t: %d, R: %.3f, r: %.3f, q: %.3f, v: %.3f, a: %.3f, l: %.3f' \
+      #     % (self.t, total_r, avg_r, avg_q, avg_q, avg_a, avg_l))
 
       if self.max_avg_r == None:
         self.max_avg_r = avg_r
 
-      if self.max_avg_r * 0.9 <= avg_r:
-        self.save_model(self.t)
-        self.max_avg_r = max(self.max_avg_r, avg_r)
+      # if self.max_avg_r * 0.9 <= avg_r:
+      #   self.save_model(self.t)
+      #   self.max_avg_r = max(self.max_avg_r, avg_r)
 
       self.inject_summary({
         'total r': total_r, 'avg r': avg_r,
@@ -101,7 +101,7 @@ class Statistic(object):
     if ckpt and ckpt.model_checkpoint_path:
       ckpt_name = os.path.basename(ckpt.model_checkpoint_path)
       fname = os.path.join(self.model_dir, ckpt_name)
-      self.saver.restore(self.sess, fname)
+      # self.saver.restore(self.sess, fname)
       logger.info("Load SUCCESS: %s" % fname)
     else:
       logger.info("Load FAILED: %s" % self.model_dir)

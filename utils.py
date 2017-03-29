@@ -6,22 +6,24 @@ from src.network import *
 
 pp = pprint.PrettyPrinter().pprint
 
+
 def get_model_dir(config, exceptions=None):
   attrs = config.__dict__['__flags']
   pp(attrs)
 
-  keys = attrs.keys()
+  keys = list(attrs.keys())
   keys.sort()
   keys.remove('env_name')
   keys = ['env_name'] + keys
 
-  names =[]
+  names = []
   for key in keys:
     # Only use useful flags
     if key not in exceptions:
       names.append("%s=%s" % (key, ",".join([str(i) for i in attrs[key]])
-          if type(attrs[key]) == list else attrs[key]))
+                              if type(attrs[key]) == list else attrs[key]))
   return os.path.join('checkpoints', *names) + '/'
+
 
 def preprocess_conf(conf):
   options = conf.__flags

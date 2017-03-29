@@ -73,7 +73,7 @@ class Network:
                 # converting the l variable to a transpose of a fully constructed square matrix
                 pivot = 0 # index of diag element in l
                 rows = []
-                for idx in xrange(action_size):
+                for idx in range(action_size):
                     count = action_size - idx # number of non-zero elements
 
                     diag_elem = tf.exp(tf.slice(l, (0, pivot), (-1, 1)))
@@ -84,18 +84,18 @@ class Network:
                     
                     # adds the zero elements
                     row = tf.pad(
-                        tf.concat(1, (diag_elem, non_diag_elems)), ((0, 0), (idx, 0)))
+                        tf.concat((diag_elem, non_diag_elems), 1 ), ((0, 0), (idx, 0)))
                     rows.append(row)
 
                     pivot += count
 
                 # the fully constructed L matrix 
-                L = tf.transpose(tf.pack(rows, axis=1), (0, 2, 1))
-                P = tf.batch_matmul(L, tf.transpose(L, (0, 2, 1)))
+                L = tf.transpose(tf.stack(rows, axis=1), (0, 2, 1))
+                P = tf.matmul(L, tf.transpose(L, (0, 2, 1)))
 
                 tmp = tf.expand_dims(u - mu, -1)
-                A = -tf.batch_matmul(tf.transpose(tmp,
-                                                  [0, 2, 1]), tf.batch_matmul(P, tmp)) / 2
+                A = -tf.matmul(tf.transpose(tmp,
+                                                  [0, 2, 1]), tf.matmul(P, tmp)) / 2
                 A = tf.reshape(A, [-1, 1])
 
             with tf.name_scope('Q'):

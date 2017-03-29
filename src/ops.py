@@ -1,7 +1,8 @@
 import tensorflow as tf
 
 from tensorflow.contrib.layers import fully_connected
-from tensorflow.contrib.layers import initializers
+from tensorflow.contrib.layers.python.layers import initializers
+# from tensorflow.contrib.layers import initializers
 from tensorflow.contrib.layers import l1_regularizer
 from tensorflow.contrib.layers import l2_regularizer
 from tensorflow.contrib.layers import batch_norm
@@ -28,7 +29,7 @@ def fc(layer, output_size, is_training,
     with tf.variable_scope(scope):
         return fully_connected(
             layer,
-            num_outputs=output_size,
+            num_outputs=int(output_size),
             activation_fn=activation_fn,
             weights_initializer=weight_init,
             weights_regularizer=weight_reg,
@@ -39,7 +40,6 @@ def fc(layer, output_size, is_training,
 
 from tensorflow.contrib.framework.python.ops import add_arg_scope
 from tensorflow.contrib.framework.python.ops import variables
-from tensorflow.contrib.layers.python.layers import initializers
 from tensorflow.contrib.layers.python.layers import utils
 
 from tensorflow.python.framework import dtypes
